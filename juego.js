@@ -1,53 +1,68 @@
 /*********** CONST VALUES ***********/
 
-const HEIGHT = 10;
-const WIDTH = 10;
+const HEIGHT = 50;
+const WIDTH = 50;
 const GRID_ID = "grid";
+const SLIDER_ID = "slider";
 const GREEN_COLOR_RGB = "rgb(0, 255, 0)";
 const GREEN_COLOR_HEX = "#0F0";
 const WHITE_COLOR_HEX = "#FFF";
 
+/*** BUTTONS ***/
+const CLEAR_BUTTON_ID = "clearButton";
+const STEP_BUTTON_ID = "stepButton";
+const RUN_BUTTON_ID = "runButton";
+const STOP_BUTTON_ID = "stopButton";
 
 /*********** PROGRAM VARIABLES ***********/
 
 var grid = document.getElementById(GRID_ID);
-var slider = document.getElementById("slider");
-var cellMatrix = [];
+var slider = document.getElementById(SLIDER_ID);
 
-var cellsNeighbors = [];
+// It is an array that replicates the html collection
+var cellMatrix = [];
+// It is an array of neighbors of each cell
+var neighboringCells = [];
+// It is the intervalID, used to stop intervals
 var intervalId;
 
 /*********** CONST FUNCTIONS ***********/
 
+
+// Create a complete grid
 const createGrid = () =>{
-    for (let externalIterator = 0; externalIterator < HEIGHT; externalIterator++) {
+    for (let rowIterator = 0; rowIterator < HEIGHT; rowIterator++) {
+        // Its the row for the HTML element
         let row = grid.insertRow();
+        // Its the row for the JS matrix
         let matrixRow = [];
-        for (let internalIterator = 0; internalIterator < WIDTH; internalIterator++) {
+        for (let columIterator = 0; columIterator < WIDTH; columIterator++) {
+          // Its the cell for the HTML element
           let cell = row.insertCell();
-          let text = document.createTextNode("");
-          cell.appendChild(text);
+          // Its the cell for the JS matrix
           matrixRow.push(cell);
         }
         cellMatrix.push(matrixRow);
     }
 }
 
-const fillNeighborsMatrix = () => {
+
+// Fill in the array of neighbors for each cell
+const fillNeighborsArray = () => {
     for(let i = 0; i < HEIGHT; i++){
         for(let j = 0; j < WIDTH; j++){
             let cellNeighbors = getNeighbors(i, j);
-            cellsNeighbors.push(cellNeighbors);
+            neighboringCells.push(cellNeighbors);
         }
     }
 }
 
+// Fill get the array of neighbors for an specific cell
 const getNeighbors = (rowIndex, columIndex) => {
     let neighbors = [];
     for(let rowItr = Math.max(0, rowIndex - 1); rowItr <= Math.min(rowIndex + 1, HEIGHT - 1); rowItr++){
         for(let colItr = Math.max(0, columIndex - 1); colItr <= Math.min(columIndex + 1, WIDTH - 1); colItr++){
             if(rowItr !== rowIndex || colItr !== columIndex){
-                //console.log(rowItr, colItr);
                 neighbors.push(cellMatrix[rowItr][colItr]);
             }
         }
@@ -55,6 +70,8 @@ const getNeighbors = (rowIndex, columIndex) => {
     return neighbors;
 }
 
+
+// Clear the grid
 const clearGrid = () => {
     for(let row of cellMatrix){
         for(let cell of row){
@@ -63,12 +80,13 @@ const clearGrid = () => {
     }
 }
 
+// Makes a simulation step
 const step = () => {
     let nextState = [];
     for(let rowItr = 0; rowItr < HEIGHT; rowItr++){
         for(let colItr = 0; colItr < WIDTH; colItr++){
             let neighborsArrayIndex = rowItr * HEIGHT  + colItr;
-            let neighbors = cellsNeighbors[neighborsArrayIndex];
+            let neighbors = neighboringCells[neighborsArrayIndex];
             let aliveNeighbors = getCountAliveNeighbors(neighbors);
             
             let currentCell = cellMatrix[rowItr][colItr];
@@ -92,23 +110,26 @@ const step = () => {
     setNextState(nextState);
 }
 
+// Runs the simulation
 const run = () => {
-    document.getElementById("stepButton").disabled = true;
-    document.getElementById("runButton").disabled = true;
-    document.getElementById("clearButton").disabled = true;
+    document.getElementById(STEP_BUTTON_ID).disabled = true;
+    document.getElementById(RUN_BUTTON_ID).disabled = true;
+    document.getElementById(CLEAR_BUTTON_ID).disabled = true;
     intervalId = setInterval(function(){
         step();
     }, slider.value)
 }
 
-
+// Stop the simulation
 const stop = () => {
-    document.getElementById("clearButton").disabled = false;
-    document.getElementById("runButton").disabled = false;
-    document.getElementById("stepButton").disabled = false;
+    document.getElementById(CLEAR_BUTTON_ID).disabled = false;
+    document.getElementById(RUN_BUTTON_ID).disabled = false;
+    document.getElementById(STEP_BUTTON_ID).disabled = false;
     clearInterval(intervalId);
 }
 
+
+// Get the count of alive neighbors from an array
 const getCountAliveNeighbors = (neighbors) => {
     let aliveNeighbors = neighbors.reduce(function (result, neighbor) {
     if(neighbor.style.backgroundColor == GREEN_COLOR_RGB){
@@ -119,9 +140,10 @@ const getCountAliveNeighbors = (neighbors) => {
     return aliveNeighbors;
 }
 
+
+// Change the grid in order to set the next state
 const setNextState = (state) => {
     stateIndex = 0;
-
     for(let rowItr = 0; rowItr < HEIGHT; rowItr++){
         for(let colItr = 0; colItr < WIDTH; colItr++){
             let currentCell = cellMatrix[rowItr][colItr];
@@ -131,6 +153,7 @@ const setNextState = (state) => {
     }
 }
 
+// Change cell state manually
 const changeCellState = (cell) =>{
     if(cell.style.backgroundColor == GREEN_COLOR_RGB){
         cell.style.backgroundColor = WHITE_COLOR_HEX;
@@ -139,7 +162,7 @@ const changeCellState = (cell) =>{
     }
 }
 
-
+// Change the simulation speed (need changes)
 const changeSimulationSpeed = () =>{
     clearInterval(intervalId);
     intervalId = setInterval(function(){
@@ -150,26 +173,27 @@ const changeSimulationSpeed = () =>{
 
 /*********** INIT ***********/
 
+// Create the grid and fill the neighbors array
 createGrid();
-fillNeighborsMatrix();
+fillNeighborsArray();
 
-// Add event listener to each cell
+// Add event listener to each cell to change states
 document.querySelectorAll(`#${GRID_ID} td`)
 .forEach(e => e.addEventListener("click", function(){
     changeCellState(e);
 }));
 
 // Add event listener to clear button
-document.getElementById("clearButton").addEventListener("click", clearGrid);
+document.getElementById(CLEAR_BUTTON_ID).addEventListener("click", clearGrid);
 
 // Add event listener to step button
-document.getElementById("stepButton").addEventListener("click", step);
+document.getElementById(STEP_BUTTON_ID).addEventListener("click", step);
 
 // Add event listener to run button
-document.getElementById("runButton").addEventListener("click", run);
+document.getElementById(RUN_BUTTON_ID).addEventListener("click", run);
 
 // Add event listener to stop button
-document.getElementById("stopButton").addEventListener("click", stop);
+document.getElementById(STOP_BUTTON_ID).addEventListener("click", stop);
 
 // Add event listener to slider
-document.getElementById("slider").addEventListener("click", changeSimulationSpeed);
+document.getElementById(SLIDER_ID).addEventListener("click", changeSimulationSpeed);

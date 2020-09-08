@@ -48,3 +48,7 @@ button:disabled{
 .stopButton {
     background-color: red;
 }
+
+.slider{
+    direction: rtl
+  }
