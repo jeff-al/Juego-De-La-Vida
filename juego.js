@@ -126,6 +126,7 @@ const stop = () => {
     document.getElementById(RUN_BUTTON_ID).disabled = false;
     document.getElementById(STEP_BUTTON_ID).disabled = false;
     clearInterval(intervalId);
+    intervalId = null;
 }
 
 
@@ -165,9 +166,11 @@ const changeCellState = (cell) =>{
 // Change the simulation speed (need changes)
 const changeSimulationSpeed = () =>{
     clearInterval(intervalId);
-    intervalId = setInterval(function(){
-        step();
-    }, slider.value)
+    if(intervalId){
+        intervalId = setInterval(function(){
+            step();
+        }, slider.value);
+    }
 }
 
 
@@ -197,3 +200,19 @@ document.getElementById(STOP_BUTTON_ID).addEventListener("click", stop);
 
 // Add event listener to slider
 document.getElementById(SLIDER_ID).addEventListener("click", changeSimulationSpeed);
+
+
+
+
+
+
+/** *
+ * Mejoras consideradas:
+ * 
+ * - Cambiar los getElements por elementos almacenados en variables
+ * - Cambiar el proceso de activación y desactivación de botones
+ * - Cambiar el manejor de aumento de velocidad
+ * - Cambiar el arreglo de vecinos por una matriz que coincida con las posiciones
+ * - Mejorar los loops en el metodo de getNeighbors por algo que sea mas entendible al programador
+ * - Mejorar la interfaz, esta fue creada parasolo ver el funcionamiento pero se puede hacer mucho mas bonita
+*/
