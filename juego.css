@@ -9,8 +9,41 @@ table {
     border-collapse: collapse;
 }
 
-#tableContainer {
+.gridContainer {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.options{
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    height: 40px;
+    width: 80px;
+    margin: 15px;
+}
+
+.clearButton {
+    background-color: green;
+    color: white;
+}
+
+.stepButton {
+    background-color: orange;
+    color: white;
+}
+
+.runButton {
+    background-color: turquoise;
+    color: white;
+}
+
+.stopButton {
+    background-color: red;
+    color: white;
 }
