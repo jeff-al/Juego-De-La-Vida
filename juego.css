@@ -26,24 +26,25 @@ button {
     height: 40px;
     width: 80px;
     margin: 15px;
+    color: white;
+}
+
+button:disabled{
+    background-color:grey;
 }
 
 .clearButton {
     background-color: green;
-    color: white;
 }
 
 .stepButton {
     background-color: orange;
-    color: white;
 }
 
 .runButton {
     background-color: turquoise;
-    color: white;
 }
 
 .stopButton {
     background-color: red;
-    color: white;
 }

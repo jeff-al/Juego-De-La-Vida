@@ -11,11 +11,11 @@ const WHITE_COLOR_HEX = "#FFF";
 /*********** PROGRAM VARIABLES ***********/
 
 var grid = document.getElementById(GRID_ID);
+var slider = document.getElementById("slider");
 var cellMatrix = [];
 
 var cellsNeighbors = [];
 var intervalId;
-var simulationSpeed = 500;
 
 /*********** CONST FUNCTIONS ***********/
 
@@ -93,13 +93,19 @@ const step = () => {
 }
 
 const run = () => {
+    document.getElementById("stepButton").disabled = true;
+    document.getElementById("runButton").disabled = true;
+    document.getElementById("clearButton").disabled = true;
     intervalId = setInterval(function(){
         step();
-    }, simulationSpeed)
+    }, slider.value)
 }
 
 
 const stop = () => {
+    document.getElementById("clearButton").disabled = false;
+    document.getElementById("runButton").disabled = false;
+    document.getElementById("stepButton").disabled = false;
     clearInterval(intervalId);
 }
 
@@ -135,8 +141,10 @@ const changeCellState = (cell) =>{
 
 
 const changeSimulationSpeed = () =>{
-    simulationSpeed = this.value;
-    console.log(this.value);
+    clearInterval(intervalId);
+    intervalId = setInterval(function(){
+        step();
+    }, slider.value)
 }
 
 
